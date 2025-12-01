@@ -9,7 +9,7 @@ import HomePage from "./Pages/HomePage";
 import Login from "./Pages/Login";
 import ForgotPassword from "./Pages/ForgotPassword";
 
-// Dashboard Pages
+// Dashboard Pages commeponents
 import Statistic from "./components/Statistic"; // Dashboard Home
 import ExamCalendar from "./components/ExamCalender";
 import GestExamen from "./Pages/gestExamen";
