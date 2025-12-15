@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import FilterButton from "../components/FilterButton";
 import PostCard from "../components/PostCard";
+import SplashScreen from "../components/SplashScreen";
 
 // --- Données Statiques (Simule la base de données des posts) ---
 const postsData = [
@@ -62,6 +63,20 @@ const postsData = [
 const HomePage = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showSplash, setShowSplash] = useState(true);
+
+  // Check if splash has been shown before
+  useEffect(() => {
+    const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+    if (hasSeenSplash) {
+      setShowSplash(false);
+    }
+  }, []);
+
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+    sessionStorage.setItem('hasSeenSplash', 'true');
+  };
 
   const categories = ["All", "Examens", "Controle", "Test Tp", "Annonce"];
 
@@ -87,6 +102,9 @@ const HomePage = () => {
 
   return (
     <>
+      {/* Show splash screen on first load */}
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+
       <div className="w-full min-h-screen bg-[#e3f0ff]">
         <Header />
 
