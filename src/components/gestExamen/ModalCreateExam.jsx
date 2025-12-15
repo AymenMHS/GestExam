@@ -5,6 +5,7 @@ const ModalCreateExam = ({ isOpen, onClose }) => {
     { id: 1, nom: "Salle N101", ouvert: false },
     { id: 2, nom: "Salle N101", ouvert: true }
   ]);
+  //data of exame
 
   const toggleSalle = (id) => {
     setSalles(salles.map(salle => 
