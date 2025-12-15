@@ -1,15 +1,19 @@
 import React from "react";
 
-const StudentRow = ({ student, onEdit, onDelete }) => {
+const StudentRow = ({ student, onEdit, onDelete, showGroupColumn = true }) => {
   return (
-    <div className="tr-table w-full flex items-center justify-between border-b border-[#E0E0E0]">
+    <div className="tr-table w-full h-[30px] flex items-center justify-between border-b border-[#E0E0E0]">
       <div className="td-table w-[12%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">{student.code}</div>
       <div className="td-table w-[18%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">{student.nom}</div>
       <div className="td-table w-[18%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">{student.prenom}</div>
       <div className="td-table w-[16%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">{student.dateNaissance}</div>
       <div className="td-table w-[12%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">{student.niveau}</div>
-      <div className="td-table w-[12%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">{student.groupe}</div>
-      <div className="td-table w-[12%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2 flex items-center justify-center gap-1">
+
+      {showGroupColumn && (
+        <div className="td-table w-[12%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">{student.groupe || ""}</div>
+      )}
+
+      <div className={`td-table ${showGroupColumn ? "w-[12%]" : "w-[12%]"} text-[12px] font-medium font-nunito text-[#333333] text-center py-2 flex items-center justify-center gap-1`}>
         <button
           onClick={() => onEdit(student)}
           className="w-[26px] h-[26px] rounded-[6px] text-white text-[11px] font-nunito shadow-sm border-none flex justify-center items-center bg-[#289c1d] cursor-pointer hover:opacity-80 hover:-translate-y-1 active:translate-y-1 transition-all duration-300"

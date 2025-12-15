@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import FilterBarStudents from "/src/components/gestEtudiant/FilterBarStudents";
 import StudentTable from "/src/components/gestEtudiant/StudentTable";
 import PaginationStudents from "/src/components/gestEtudiant/PaginationStudents";
 import ModalCreateStudent from "/src/components/gestEtudiant/ModalCreateStudent";
 import ModalImportStudents from "/src/components/gestEtudiant/ModalImportStudents";
+import GroupsView from "/src/components/gestEtudiant/GroupsView";
 
 const GestEtudiant = () => {
   // sample data
@@ -16,9 +17,10 @@ const GestEtudiant = () => {
   ];
 
   const [students, setStudents] = useState(initialStudents);
+  const [groups, setGroups] = useState([]);
   const [search, setSearch] = useState("");
   const [niveau, setNiveau] = useState("");
-  const [groupe, setGroupe] = useState("");
+  const [groupeFilter, setGroupeFilter] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -27,28 +29,40 @@ const GestEtudiant = () => {
   const [page, setPage] = useState(1);
   const perPage = 8;
 
-  // dynamic groups per niveau (sample)
-  const groupsByNiveau = {
-    L1: ["Groupe 1", "Groupe 2"],
-    L2: ["Groupe 1", "Groupe 2", "Groupe 3"],
-    L3: ["Groupe 1", "Groupe 2", "Groupe 3", "Groupe 4"],
-    M1: ["Groupe A", "Groupe B"],
-    M2: ["Groupe A", "Groupe B"],
-  };
+  // onglet actif : 'all' | 'groups'
+  const [activeTab, setActiveTab] = useState("all");
+
+  // initialize groups from existing student.groupe (simple deduction)
+  useEffect(() => {
+    // construit la liste de groupes uniques par niveau à partir des étudiants (si groupe string présent)
+    const map = {};
+    students.forEach(s => {
+      if (s.groupe && s.groupe.trim() !== "") {
+        const key = `${s.groupe}__${s.niveau}`;
+        map[key] = { name: s.groupe, niveau: s.niveau, capacity: 22 };
+      }
+    });
+    const arr = Object.values(map);
+    setGroups(prev => {
+      // conserve les groupes existants qui ne viennent pas des students (si tu veux)
+      // ici on remplace pour cohérence
+      return arr;
+    });
+  }, []); // une seule fois au montage
 
   // computed filtered students
   const filtered = useMemo(() => {
     return students.filter(s => {
       const q = search.trim().toLowerCase();
       if (q) {
-        const match = (s.code + " " + s.nom + " " + s.prenom + " " + (s.email||"")).toLowerCase();
+        const match = (s.code + " " + s.nom + " " + s.prenom + " " + (s.email || "")).toLowerCase();
         if (!match.includes(q)) return false;
       }
       if (niveau && s.niveau !== niveau) return false;
-      if (groupe && s.groupe !== groupe) return false;
+      if (groupeFilter && s.groupe !== groupeFilter) return false;
       return true;
     });
-  }, [students, search, niveau, groupe]);
+  }, [students, search, niveau, groupeFilter]);
 
   const onAdd = () => {
     setSelectedStudent(null);
@@ -61,7 +75,7 @@ const GestEtudiant = () => {
       setStudents(prev => prev.map(s => (s.code === student.code ? student : s)));
     } else {
       // generate code if missing
-      const code = student.code || `S${String(Math.floor(Math.random()*900)+100)}`;
+      const code = student.code || `S${String(Math.floor(Math.random() * 900) + 100)}`;
       setStudents(prev => [{ ...student, code }, ...prev]);
     }
   };
@@ -79,7 +93,7 @@ const GestEtudiant = () => {
 
   const handleImport = (importedRows) => {
     const cleaned = importedRows.map(r => ({
-      code: r.code || `S${Math.floor(Math.random()*900)+100}`,
+      code: r.code || `S${Math.floor(Math.random() * 900) + 100}`,
       nom: r.nom || "",
       prenom: r.prenom || "",
       dateNaissance: r.dateNaissance || "",
@@ -98,8 +112,19 @@ const GestEtudiant = () => {
   const setPageSafe = (p) => setPage(Math.max(1, Math.min(p, filteredTotalPages)));
   const visibleStudents = filtered.slice((currentPage - 1) * perPage, currentPage * perPage);
 
-  // compute dynamic group options for select (the FilterBar select will be populated client-side if you adapt it; for now the select is static in the component)
-  const groupesPourNiveau = groupsByNiveau[niveau] ?? [];
+  // compute dynamic group options for select
+  const groupesPourNiveau = useMemo(() => {
+    if (!niveau) return [];
+    return groups.filter(g => g.niveau === niveau).map(g => g.name);
+  }, [groups, niveau]);
+
+  // --- helper pour assigner/retirer étudiants depuis la vue group (utilisée par GroupsView) ---
+  function assignStudentToGroup(studentCode, groupName) {
+    setStudents(prev => prev.map(s => (s.code === studentCode ? { ...s, groupe: groupName } : s)));
+  }
+  function unassignStudent(studentCode) {
+    setStudents(prev => prev.map(s => (s.code === studentCode ? { ...s, groupe: "" } : s)));
+  }
 
   return (
     <div className="flex justify-center items-start w-full min-h-[60vh] bg-[#E3F0FF] p-5">
@@ -107,28 +132,55 @@ const GestEtudiant = () => {
         <div className="gestEtudiant w-full bg-white rounded-lg p-3 flex flex-col items-center gap-2">
           <h1 className="text-[20px] font-bold w-full font-nunito">Gestion des étudiants</h1>
 
-          <FilterBarStudents
-            search={search}
-            onSearchChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            niveau={niveau}
-            onNiveauChange={(e) => { setNiveau(e.target.value); setGroupe(""); setPage(1); }}
-            groupe={groupe}
-            onGroupeChange={(e) => { setGroupe(e.target.value); setPage(1); }}
-            onImport={() => setShowImportModal(true)}
-            onAdd={onAdd}
-          />
-
-          <div className="container-student w-full bg-[#F9F9F9] rounded-lg p-2 overflow-visible">
-            <StudentTable students={visibleStudents} onEdit={onEdit} onDelete={onDelete} />
+          {/* Tabs */}
+          <div className="w-full flex gap-2">
+            <button onClick={() => setActiveTab("all")} className={`px-3 py-1 rounded ${activeTab === "all" ? "bg-[#ECF0FF] border-2 border-[#3B679A]" : "bg-white"}`}>Tous les étudiants</button>
+            <button onClick={() => setActiveTab("groups")} className={`px-3 py-1 rounded ${activeTab === "groups" ? "bg-[#ECF0FF] border-2 border-[#3B679A]" : "bg-white"}`}>Groupes</button>
           </div>
 
-          <PaginationStudents
-            page={currentPage}
-            totalPages={filteredTotalPages}
-            onPrev={() => setPageSafe(currentPage - 1)}
-            onNext={() => setPageSafe(currentPage + 1)}
-            onGoto={(p) => setPageSafe(p)}
-          />
+          {/* Tab panels */}
+          {activeTab === "all" && (
+            <>
+              <FilterBarStudents
+                search={search}
+                onSearchChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                niveau={niveau}
+                onNiveauChange={(e) => { setNiveau(e.target.value); setGroupeFilter(""); setPage(1); }}
+                groupe={groupeFilter}
+                onGroupeChange={(e) => { setGroupeFilter(e.target.value); setPage(1); }}
+                onImport={() => setShowImportModal(true)}
+                onAdd={onAdd}
+                showGroupSelect={false} // <-- cacher le select 'filtrer par groupe' comme demandé
+                groupesOptions={[]} // pas utilisé ici
+              />
+
+              <div className="container-student w-full bg-[#F9F9F9] rounded-lg p-2 overflow-visible">
+                <StudentTable students={visibleStudents} onEdit={onEdit} onDelete={onDelete} showGroupColumn={false} />
+              </div>
+
+              <PaginationStudents
+                page={currentPage}
+                totalPages={filteredTotalPages}
+                onPrev={() => setPageSafe(currentPage - 1)}
+                onNext={() => setPageSafe(currentPage + 1)}
+                onGoto={(p) => setPageSafe(p)}
+              />
+            </>
+          )}
+
+          {activeTab === "groups" && (
+            <>
+              <div className="w-full bg-[#F9F9F9] rounded-lg p-3">
+                <GroupsView
+                  students={students}
+                  setStudents={setStudents}
+                  groups={groups}
+                  setGroups={setGroups}
+                  MAX_CAPACITY={22}
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
 

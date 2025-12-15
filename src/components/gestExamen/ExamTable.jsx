@@ -11,6 +11,10 @@ const ExamTable = ({ examens, onView, onEdit }) => {
         <div className="th-table w-[14%] text-[14px] font-bold font-nunito text-[#555555] text-center py-2">Type</div>
         <div className="th-table w-[10%] text-[14px] font-bold font-nunito text-[#555555] text-center py-2">Date</div>
         <div className="th-table w-[10%] text-[14px] font-bold font-nunito text-[#555555] text-center py-2">Horaire</div>
+
+        {/* Nouvelle colonne Statut */}
+        <div className="th-table w-[8%] text-[14px] font-bold font-nunito text-[#555555] text-center py-2">Statut</div>
+
         <div className="th-table w-[12%] text-[14px] font-bold font-nunito text-[#555555] text-center py-2">Actions</div>
       </div>
 

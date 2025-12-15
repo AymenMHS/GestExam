@@ -8,7 +8,6 @@ import SplashScreen from "../components/SplashScreen";
 // --- Données Statiques (Simule la base de données des posts) ---
 const postsData = [
   // ... (Conserver ici le tableau postsData)
-  // commentaire
   {
     id: 1,
     category: "Examens",

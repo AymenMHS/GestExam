@@ -1,6 +1,16 @@
 import React from "react";
 
+const statusBadgeClass = (status) => {
+  const s = (status || "").toString().toLowerCase();
+  if (["prêt", "pret", "ready", "ready"].includes(s)) return "bg-green-100 text-green-800";
+  if (["réclamation", "reclamation", "réclam", "reclam"].includes(s)) return "bg-red-100 text-red-800";
+  // default = En Attente
+  return "bg-yellow-100 text-yellow-800";
+};
+
 const ExamRow = ({ examen, onView, onEdit }) => {
+  const statut = examen?.status || examen?.statut || examen?.etat || "En Attente";
+
   return (
     <div className="tr-table w-full flex items-center justify-between border-b border-[#E0E0E0]">
       <div className="td-table w-[12%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">{examen.code}</div>
@@ -9,6 +19,14 @@ const ExamRow = ({ examen, onView, onEdit }) => {
       <div className="td-table w-[14%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">{examen.type}</div>
       <div className="td-table w-[10%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">{examen.date}</div>
       <div className="td-table w-[10%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">{examen.horaire}</div>
+
+      {/* Statut */}
+      <div className="td-table w-[8%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2">
+        <span className={`inline-block px-3 py-1 rounded-full text-xs ${statusBadgeClass(statut)}`} title={statut}>
+          {statut}
+        </span>
+      </div>
+
       <div className="td-table w-[12%] text-[12px] font-medium font-nunito text-[#333333] text-center py-2 flex items-center justify-center gap-1">
         <button
           onClick={onView}

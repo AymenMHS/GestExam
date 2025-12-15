@@ -1,6 +1,17 @@
 import React from "react";
 
-const FilterBarStudents = ({ search, onSearchChange, niveau, onNiveauChange, groupe, onGroupeChange, onImport, onAdd }) => {
+const FilterBarStudents = ({
+  search,
+  onSearchChange,
+  niveau,
+  onNiveauChange,
+  groupe,
+  onGroupeChange,
+  onImport,
+  onAdd,
+  showGroupSelect = true,
+  groupesOptions = []
+}) => {
   return (
     <div className="filter-student w-full flex flex-wrap items-center justify-between gap-2">
       <input
@@ -24,14 +35,18 @@ const FilterBarStudents = ({ search, onSearchChange, niveau, onNiveauChange, gro
         <option value="M2">M2</option>
       </select>
 
-      <select
-        value={groupe}
-        onChange={onGroupeChange}
-        className="min-w-[140px] max-w-[220px] bg-[#F2F2F2] rounded-[8px] pl-2 pr-2 py-1 text-[14px] font-nunito shadow-sm"
-      >
-        <option className="text-[rgb(180,180,180)]" value="">--Groupe--</option>
-        {/* options de groupe dynamiques fournies par la page */}
-      </select>
+      {showGroupSelect && (
+        <select
+          value={groupe}
+          onChange={onGroupeChange}
+          className="min-w-[140px] max-w-[220px] bg-[#F2F2F2] rounded-[8px] pl-2 pr-2 py-1 text-[14px] font-nunito shadow-sm"
+        >
+          <option className="text-[rgb(180,180,180)]" value="">--Groupe--</option>
+          {groupesOptions.map((g, idx) => (
+            <option key={idx} value={g}>{g}</option>
+          ))}
+        </select>
+      )}
 
       <div className="flex items-center gap-2">
         <button

@@ -1,8 +1,10 @@
 // src/components/gestModule/ModuleCard.jsx
 import React, { useState } from "react";
+import ModalAutoPlanExam from "./ModalAutoPlanExam";
 
 function ModuleCard({ promo, onEdit, onDelete }) {
   const [open, setOpen] = useState(false);
+  const [openAuto, setOpenAuto] = useState(false);
 
   return (
     <div className={`w-full rounded-[8px] bg-[#F5F5F5] shadow-sm p-2 flex flex-col gap-2 ${!open ? "" : "bg-[#f3f3f3]"}`}>
@@ -19,14 +21,14 @@ function ModuleCard({ promo, onEdit, onDelete }) {
           </p>
         </div>
 
-        <div className="w-[220px] flex items-center justify-end gap-2">
+        <div className="w-[300px] h-[32px] flex items-center justify-end gap-2">
           <button
-            className="px-2 py-1 rounded-[6px] bg-[#4c87af] text-white text-xs flex items-center
-                       transition-all duration-300 ease-in-out hover:opacity-80 hover:-translate-y-[1px] active:translate-y-[2px]"
-            title="Planifié auto"
+            onClick={() => setOpenAuto(true)}
+            className="h-[32px] px-2 py-1 rounded-[6px] bg-[#4c87af] text-white text-xs flex items-center
+                      transition-all duration-300 ease-in-out hover:opacity-80 hover:-translate-y-[1px] active:translate-y-[2px]"
           >
             <img src="/src/assets/icons/calendrier.png" alt="" className="w-3 h-3 mr-1" />
-            Planifié
+            Planifié automatiquement
           </button>
 
           <button
@@ -61,6 +63,13 @@ function ModuleCard({ promo, onEdit, onDelete }) {
           </button>
         </div>
       </div>
+      {openAuto && (
+        <ModalAutoPlanExam
+          isOpen={openAuto}
+          onClose={() => setOpenAuto(false)}
+          promo={promo}
+        />
+      )}
 
       {/* content plus d'info */}
       {open && (
