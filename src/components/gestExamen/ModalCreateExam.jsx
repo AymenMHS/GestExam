@@ -5,7 +5,7 @@ const ModalCreateExam = ({ isOpen, onClose }) => {
     { id: 1, nom: "Salle N101", ouvert: false },
     { id: 2, nom: "Salle N101", ouvert: true }
   ]);
-
+//Models
   const toggleSalle = (id) => {
     setSalles(salles.map(salle => 
       salle.id === id ? { ...salle, ouvert: !salle.ouvert } : salle
