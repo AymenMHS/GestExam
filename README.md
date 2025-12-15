@@ -1,16 +1,46 @@
-# React + Vite
+# 🎓 Plateforme de gestion & planification des examens
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Exam Planning & Management Platform** — application web React pour gérer la planification des examens : étudiants, surveillants, salles, rôles, détection de conflits et calendrier.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Fonctionnalités
 
-## React Compiler
+- Authentification et gestion des rôles (Admin, Planificateur, Surveillant, Étudiant)
+- Gestion des étudiants (CRUD, import CSV)
+- Gestion des surveillants (disponibilités, affectations)
+- Gestion des salles (capacité, disponibilités)
+- Création / planification des examens (wizard multi-étapes)
+- Moteur de détection d'**indisponibilités / conflits** (salle ou surveillant)
+- Vue calendrier interactive (jour/semaine/mois)
+- Notifications UI (toasts) et templates d'email (si backend configuré)
+- Export CSV / PDF (si implémenté)
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+---
 
-## Expanding the ESLint configuration
+## Technos
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Frontend** : React
+- **Routing** : React Router
+- **HTTP** : Axios (ou fetch)
+- **Calendrier** : FullCalendar (ou équivalent)
+- **State** : Context API / Redux (selon implémentation)
+- **Styling** : CSS / Tailwind / Material UI (selon implémentation)
+- Bundler : Vite / Create React App (selon implémentation)
+
+---
+
+## Prérequis
+
+- Node.js ≥ 18
+- npm (ou yarn)
+- Un backend API REST en local ou distant (ex. : Laravel, Node/Express). L'application frontend suppose une API disponible pour l'auth et les ressources.
+- Git (pour cloner)
+
+---
+
+## Installation et lancement (local)
+
+### 1. Cloner le dépôt
+```bash
+git clone https://github.com/AymenMHS/GestExam.git
+cd GestExam
